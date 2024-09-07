@@ -1,21 +1,29 @@
 # ImageProcessingUsingML
-# Brick Sound Quality Evaluation
 
-This project analyzes audio recordings of brick sounds to determine their quality—whether they resemble metal (high-quality) or cardboard (low-quality) when struck together. It utilizes spectrogram analysis to visualize and evaluate the sound characteristics.
+This repository features solutions for enhancing image quality and detecting specific features using OpenCV and NumPy. The project includes two main functionalities:
 
-## Features
+### Lava Flow Detection
+### Flash and No-Flash Image Merging
 
-•⁠  ⁠Audio processing using Librosa for spectrogram computation
-•⁠  ⁠Quality evaluation based on spectrogram intensity
-•⁠  ⁠Visual representation of spectrograms and evaluation results
-•⁠  ⁠Display of evaluation results on a custom dot matrix display
+## Lava Flow Detection
 
-# Tower of Hanoi Dot Matrix Display
+The lava flow detection solution focuses on identifying specific features in lava flow dynamics. It utilizes advanced image processing techniques to analyze and detect key features:
 
-This project calculates the number of steps required to solve the Tower of Hanoi puzzle for a given number of disks and displays the result on a custom-width dot matrix display. The display mimics LED sea markers and uses a circular disc for each dot. The project also includes a bonus section for solving the Cyclic Hanoi puzzle.
+### Feature Extraction:
+Masking and Gamma Correction: Applies masking to remove bright areas and gamma correction to adjust image brightness.
+Circle Detection: Uses the Hough Circle Transform to detect circular features in the processed image.
+Thresholding and Filtering: Highlights features and removes noise for clearer detection.
+Application: Ideal for analyzing lava flow dynamics and other scenarios where detecting specific features is crucial.
 
-## Features
+## Flash and No-Flash Image Merging
 
-•⁠  ⁠Calculate steps to solve Tower of Hanoi
-•⁠  ⁠Generate dot matrix display for visual representation
-•⁠  ⁠Support for grayscale dot matrix images
+This solution enhances low-light images by merging flash and no-flash photos. It improves image clarity and visibility in challenging lighting conditions:
+
+### Image Enhancement:
+Image Processing: Combines details from both flash and no-flash images to create a clearer final image.
+Bilateral Filtering: Preserves fine details while smoothing the image to reduce noise.
+Application: Useful for improving clarity in low-light conditions and achieving better overall image quality.
+
+## Usage
+
+Both functionalities are designed to process images effectively. Use the respective methods to either detect specific features or enhance image quality based on your needs.
