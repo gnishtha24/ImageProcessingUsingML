@@ -12,7 +12,7 @@ def process(img):  #pixel values in range
   img = img.astype('double')/255
   return split(img)
 
-def thresh(mask, f):
+def thresh(mask, f):  #creates binary mask and isolates areas with significant changes
   flag = np.zeros((mask.shape), np.uint8)
   flag[(mask > -0.2) & (mask < -0.05)] = 1
   flag[(mask > 0.65) & (mask < 0.7)] = 1
@@ -23,36 +23,36 @@ def dia(radius):
   diameter = 2 * radius + 1
   return cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (diameter, diameter))
 
-def morph(flag):
-  d1 = dia(2)
+def morph(flag):    #performs erosion, flood filling, dilation, and additional erosion to clean up the mask
+  d1 = dia(2)       #removes noise, fills gaps, and improves the accuracy of the mask
   d2 = dia(6)
   d3 = dia(4)
 
-  flag = cv2.erode(flag, d1, iterations = 1)
-  mask = np.zeros((flag.shape[0]+2, flag.shape[1]+2), np.uint8)
-  cv2.floodFill(flag, mask, (0,0), 1)
+  flag = cv2.erode(flag, d1, iterations = 1)  #removes small noise elements
+  mask = np.zeros((flag.shape[0]+2, flag.shape[1]+2), np.uint8)  
+  cv2.floodFill(flag, mask, (0,0), 1)  #fills gaps
   mask = 1 - mask
-  mask = cv2.dilate(mask, d2)
-  mask = cv2.erode(mask, d3)
+  mask = cv2.dilate(mask, d2)  #expands mask
+  mask = cv2.erode(mask, d3)  #smooth boundaries
   morphed_mask = mask.astype('double')
 
   return morphed_mask
 
-def filter(mask):
+def filter(mask):  #smooths mask
   kernel = np.array([
   [0.1070,    0.1131,    0.1070],
   [0.1131,    0.1196,    0.1131],
   [0.1070,    0.1131,    0.1070]
   ])
-  mask = cv2.filter2D(mask, -1, kernel)
+  mask = cv2.filter2D(mask, -1, kernel)  #applies convolutional filter to mask
   return mask
 
 def create_mask(f,nof):
   mask = f - nof   #diff b f and nf to know where does f has impact
-  flash_mask = thresh(mask, f)
-  morph_mask = morph(flash_mask)
-  filter_mask = filter(morph_mask)
-  return filter_mask[:-2,:-2]
+  flash_mask = thresh(mask, f)    #diff calc, binary mask
+  morph_mask = morph(flash_mask)    #improves mask
+  filter_mask = filter(morph_mask)  #smooths and add a layer
+  return filter_mask[:-2,:-2]   #final mask, cropped to remove padding
 
 def gaussTo1(r,g,b):  #rgb to grayscale using weighted sum
   return 0.299*r + 0.587*g + 0.114*b
@@ -73,8 +73,8 @@ def parameters(h):
   else:
     return 7, 8, 1.5
 
-def bilateral(flash, nonflash):
-  k, sigma_s, sigma_r = parameters(flash.shape[0])
+def bilateral(flash, nonflash):    #apply bilateral filter to each color chanel to separate into
+  k, sigma_s, sigma_r = parameters(flash.shape[0])    #joint, base and output base
   gauss_mask = gaussian_kernel(k, sigma_s)
 
   bias = (k//2)
@@ -115,7 +115,7 @@ def bilateral(flash, nonflash):
 
   return [non_flash_joint, non_flash_base, output_base]
 
-def get_detail(f,base):
+def get_detail(f,base): #gets detail by dividing flash/base
   return (f + 0.02)/(base + 0.02)
 
 def cvTo(image):
@@ -150,7 +150,7 @@ def solution(image_path_a, image_path_b):
 
   output_fin = (np.dstack(((1-shadow_mask), (1-shadow_mask), (1-shadow_mask)))*(non_flash_joint*output_detail) + np.dstack((shadow_mask, shadow_mask, shadow_mask))*(non_flash_base))
 
-  output_fin[output_fin>1] = 1
+  output_fin[output_fin>1] = 1  #ensures range is [0,1] and converts to 8 bit 
   output_detail[output_detail>1] = 1
 
   img = cvTo(output_fin)
