@@ -135,7 +135,8 @@ def solution(image_path_a, image_path_b):
   f = gaussTo1(fr,fg,fb)
   nof = gaussTo1(nfr,nfg,nfb)
   shadow_mask = create_mask(f,nof)
-
+  
+#bilateral filtering to each color channel
   [non_flash_joint_r, non_flash_base_r, output_base_r] = bilateral(fr, nfr)
   [non_flash_joint_g, non_flash_base_g, output_base_g] = bilateral(fg, nfg)
   [non_flash_joint_b, non_flash_base_b, output_base_b] = bilateral(fb, nfb)
@@ -144,7 +145,8 @@ def solution(image_path_a, image_path_b):
   output_detail_g = get_detail(fg,output_base_g)
   output_detail_b = get_detail(fb,output_base_b)
   output_detail = np.dstack((output_detail_r, output_detail_g, output_detail_b))
-
+  
+#Combines the enhanced detail from the flash image with the no-flash image based on the shadow mask
   non_flash_joint = np.dstack((non_flash_joint_r, non_flash_joint_g, non_flash_joint_b))
   non_flash_base = np.dstack((non_flash_base_r, non_flash_base_g, non_flash_base_b))
 
