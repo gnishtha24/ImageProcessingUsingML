@@ -1,13 +1,13 @@
 import cv2
 import numpy as np
 
-def split(img):
+def split(img):  #process each color separate
   r = img[:,:,0]
   g = img[:,:,1]
   b = img[:,:,2]
   return r,g,b
 
-def process(img):
+def process(img):  #pixel values in range
   img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
   img = img.astype('double')/255
   return split(img)
@@ -48,13 +48,13 @@ def filter(mask):
   return mask
 
 def create_mask(f,nof):
-  mask = f - nof
+  mask = f - nof   #diff b f and nf to know where does f has impact
   flash_mask = thresh(mask, f)
   morph_mask = morph(flash_mask)
   filter_mask = filter(morph_mask)
   return filter_mask[:-2,:-2]
 
-def gaussTo1(r,g,b):
+def gaussTo1(r,g,b):  #rgb to grayscale using weighted sum
   return 0.299*r + 0.587*g + 0.114*b
 
 def gaussian_kernel(k, sig):
