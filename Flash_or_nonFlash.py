@@ -7,7 +7,7 @@ def split(img):  #process each color separate
   b = img[:,:,2]
   return r,g,b
 
-def process(img):  #pixel values in range
+def process(img):  #pixel values in range,splits it
   img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
   img = img.astype('double')/255
   return split(img)
